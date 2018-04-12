@@ -1,0 +1,133 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}                                                                                 
+\usepackage{url}
+\usepackage{listings}
+
+\usepackage[margin=0.75in]{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+\usepackage[noadjust]{cite}
+\nocite{*}
+%random comment
+
+\usepackage{hyperref}
+\usepackage{geometry}
+\linespread{1}
+\def\name{Rahul Borkar}
+
+\usepackage{titling}
+\title{Project 1: Getting Acquainted}
+\author{
+  Jui-Hung Lu \hspace{1cm}
+  \and
+  Yi Li \hspace{1cm}
+  \and
+  Rahul Borkar
+}
+\date{April 11th, 2018}
+
+%% The following metadata will show up in the PDF properties
+\hypersetup{
+  colorlinks = true,
+  urlcolor = black,
+  pdfauthor = {\name},
+  pdfkeywords = {cs544 ``operating systems'' },
+  pdftitle = {CS 544 Project 1: Getting Acquainted},
+  pdfsubject = {CS 544 Project 1},
+  pdfpagemode = UseNone
+}
+
+\begin{document}
+\begin{titlepage}
+
+\maketitle
+\begin{center}
+CS544: Operating Systems II \\
+Spring 2018
+\vspace{50 mm}
+\end{center}
+\begin{abstract}
+In this first assignment for the course, we set up our Linux kernel on the class server in a virtual machine, using a qemu based Yocto environment. This report lists the commands executed to set up and run the virtual machine, and an explanation for several of the flags used in setting it up. 
+\end{abstract}
+\end{titlepage}
+\section{Setup Procedure}
+\subsection{Commands used to setup kernel and qemu}
+\begin{enumerate}
+\item (os-class) mkdir /scratch/spring2018/group16
+\item (os-class) cd /scratch/spring2018/group16
+\item (os-class) cp /scratch/files/* .
+\item (os-class) source environment-setup-i586-poky-linux
+\item (os-class) git clone git://git.yoctoproject.org/linux-yocto-3.19
+\item (os-class) cd linux-yocto-3.19
+\item (os-class) git checkout tags/v3.19.2
+\item (os-class) cp /scratch/files/config-3.19.2-yocto-standard ~/cs544/linux-yocto-3.19/.config
+\item (os-class) make -j4 all
+\item (os-class) cd ..
+\item (os-class) qemu-system-i386 -gdb tcp::5516 -S -nographic -kernel bzImage-qemux86.bin -drive file=core-image-lsb-sdk-qemux86.ext4,if=virtio -enable-kvm -net none -usb -localtime --no-reboot --append "root=/dev/vda rw console=ttyS0 debug"
+\item In a new terminal:
+\item (os-class) gdb
+\item (gdb) target remote :5516
+\item (gdb) continue
+\item Back in the original terminal:
+\item qemux86 login: root
+\end{enumerate}
+
+\subsection{Explanation of flags for qemu command}
+We found what these flags do by looking at the qemu documentation. \cite{qemu_ref}
+\begin{itemize}
+\item -gdb tcp::5516 \\
+Open a GDB server on TCP port 5516.
+\item -S \\
+Do not start CPU at startup.
+\item -nographic \\
+Disable graphical output so QEMU is just a command line application.
+\item -kernel bzImage-qemux86.bin \\
+Use bzImage-qemux86.bin as kernel image for the VM.
+\item -drive file=core-image-lsb-sdk-qemux86.ext3,if=virtio \\
+Define a new drive with disk image as core-image-lsb-sdk-qemux86.ext4. The ‘if’ option defines on which type on interface the drive is connected. In this case it is virtio, which is short for virtualization.
+\item -enable-kvm \\
+Enables KVM full virtualization support.
+\item -net none \\
+This setting is for network devices. The option "none" specifies to not configure any network devices.
+\item -usb \\ 
+This enables the USB driver.
+\item -localtime \\ 
+Set the VM to sync with local time.
+\item --no-reboot \\
+Exit instead of rebooting.
+\item --append "root=/dev/vda rw console=ttyS0 debug" \\
+Use "root=/dev/vda rw console=ttyS0 debug" as kernel command line. Specifically, “root=/dev/vda” specifies where the root directory is to mount and boot correctly. “console=ttyS0” tells the kernel to use the “ttyS0” console.
+\end{itemize}
+
+\section{Version Control Log}
+\begin{center}
+ \begin{tabular}{||c c c||} 
+ \hline
+ Date & Commit & Message \\ [0.5ex] 
+ \hline\hline
+ 4/8/18 & d000cfaf2d376b3d9fd6d64b8d73e8a83a05f4b0 & Concurrency progress, still broken\\ 
+ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+%input the pygmentized output of mt19937ar.c, using a (hopefully) unique name
+%this file only exists at compile time. Feel free to change that.
+
+\section{Work Log}
+\begin{center}
+ \begin{tabular}{||c c c ||} 
+ \hline
+ Date & Hours & Work Done\\ [0.5ex] 
+ \hline\hline
+ 4/8/18 & 2 & Group meeting, cloned repo, got VM running, started writeup\\ 
+ \hline
+  4/11/18 & 2 & Group meeting, worked on writeup, made makefile, prepared submission\\ 
+ \hline
+ 4/12/18 & 3 & Finished writeup, submitted\\
+ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+\bibliographystyle{IEEEtran}
+\bibliography{./ref}
+\end{document}
