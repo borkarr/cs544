@@ -54,6 +54,9 @@ choice
 
 	config DEFAULT_NOOP
 		bool "No-op"
+	
+	config DEFAULT_SSTF
+		bool "SSTF" if IOSCHED_SSTF=y
 
 endchoice
 
