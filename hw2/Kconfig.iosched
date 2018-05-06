@@ -31,13 +31,6 @@ config IOSCHED_CFQ
 	  and server systems.
 
 	  This is the default I/O scheduler.
-
-config IOSCHED_SSTF
-	tristate "SSTF I/O scheduler"
-	default y
-	--help---
-	  This is a custom I/O scheduler written by group 16 of CS544-SP18
-	  based on the noop scheduler.
 	  
 config CFQ_GROUP_IOSCHED
 	bool "CFQ Group Scheduling support"
